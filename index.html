@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orange · Fornecedores de Ingressos</title>
+<style>
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", "Cascadia Code", "Fira Code", Menlo, Consolas, monospace;
+    --bg: #050508;
+    --surface: #0c0c11;
+    --card: #101016;
+    --card-hover: #16161e;
+    --border: #1c1c28;
+    --border-hover: #2e2e40;
+    --text: #ededf0;
+    --muted: #64647a;
+    --emissao: #f97316;
+    --utilizacao: #22c55e;
+    --pendente: #6b7280;
+    --extranet: #14b8a6;
+    --reseller: #ec4899;
+    --b2b: #eab308;
+    --restech: #3b82f6;
+    --channel_manager: #a855f7;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-sans); min-height: 100vh; overflow-x: hidden; }
+  .hero { position: relative; padding: 64px 48px 32px; }
+  .hero::before { content:''; position:absolute; top:-300px; left:50%; transform:translateX(-50%); width:900px; height:900px; background:radial-gradient(circle, rgba(249,115,22,0.06) 0%, transparent 55%); pointer-events:none; }
+  .badge { display:inline-flex; align-items:center; gap:7px; background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.18); border-radius:99px; padding:5px 14px; font-size:11px; font-weight:600; color:var(--emissao); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:18px; animation:fadeIn .5s ease; }
+  .badge .pulse { width:6px;height:6px;background:var(--emissao);border-radius:50%;animation:pulse 2s infinite; }
+  h1 { font-family:var(--font-display); font-size:clamp(32px,5vw,56px); font-weight:800; letter-spacing:-2px; line-height:1; animation:fadeUp .5s ease; }
+  h1 span { color:var(--emissao); }
+  .subtitle { color:var(--muted); font-size:13px; margin-top:10px; animation:fadeUp .5s ease .05s both; }
+  .toolbar { padding:0 48px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:12px; animation:fadeUp .5s ease .1s both; }
+  .search-box { position:relative; flex:1; min-width:220px; max-width:420px; }
+  .search-box svg { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); }
+  .search-box input { width:100%; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px 14px 12px 40px; font-size:13px; color:var(--text); font-family:var(--font-sans); outline:none; transition:all .25s; }
+  .search-box input::placeholder { color:var(--muted); }
+  .search-box input:focus { border-color:rgba(249,115,22,0.35); box-shadow:0 0 0 3px rgba(249,115,22,0.06); }
+  .result-count { font-family:var(--font-mono); font-size:11px; color:var(--muted); white-space:nowrap; }
+  .chips { display:flex; gap:6px; padding:0 48px; flex-wrap:wrap; margin-bottom:40px; animation:fadeUp .5s ease .15s both; }
+  .chip { display:flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:7px 14px; cursor:pointer; transition:all .2s; user-select:none; font-size:12px; font-weight:500; }
+  .chip:hover { border-color:var(--border-hover); background:var(--card-hover); }
+  .chip.active { border-color:currentColor; background:rgba(255,255,255,0.03); }
+  .chip .cdot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+  .chip .cnum { font-family:var(--font-mono); font-weight:600; }
+  .chip .clabel { color:var(--muted); }
+  .main { padding:0 48px 80px; }
+  .sec { margin-bottom:48px; animation:fadeUp .4s ease both; }
+  .sec-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .sec-head h2 { font-family:var(--font-display); font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; white-space:nowrap; }
+  .sec-head .cnt { font-family:var(--font-mono); font-size:10px; padding:2px 10px; border-radius:99px; border:1px solid; white-space:nowrap; }
+  .sec-head .line { flex:1; height:1px; background:linear-gradient(90deg, var(--border) 0%, transparent 100%); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:all .25s; }
+  .card:hover { border-color:var(--border-hover); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,.3); }
+  .card-head { padding:12px 16px; display:flex; align-items:center; gap:9px; border-bottom:1px solid var(--border); position:relative; }
+  .card-head::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; }
+  .card-head .dot { width:7px;height:7px;border-radius:50%; }
+  .card-head h3 { font-family:var(--font-display); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+  .card-head .cc { margin-left:auto; font-family:var(--font-mono); font-size:10px; color:var(--muted); background:rgba(255,255,255,.03); padding:2px 8px; border-radius:99px; }
+  .items { padding:4px 0; }
+  .item { display:flex; align-items:center; justify-content:space-between; padding:8px 16px; transition:background .15s; }
+  .item:hover { background:rgba(255,255,255,.02); }
+  .item-name { font-size:13px; font-weight:500; }
+  .tag { font-family:var(--font-mono); font-size:9px; padding:2px 7px; border-radius:4px; letter-spacing:.04em; font-weight:500; white-space:nowrap; }
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(4px); z-index:100; align-items:center; justify-content:center; }
+  .modal-bg.show { display:flex; }
+  .modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px; width:90%; max-width:460px; animation:fadeUp .3s ease; }
+  .modal h2 { font-size:18px; font-weight:700; margin-bottom:20px; }
+  .modal label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
+  .modal input, .modal select, .modal textarea { width:100%; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-size:13px; color:var(--text); font-family:var(--font-sans); outline:none; margin-bottom:14px; transition:border .2s; }
+  .modal input:focus, .modal select:focus, .modal textarea:focus { border-color:rgba(249,115,22,.4); }
+  .modal textarea { resize:vertical; min-height:60px; }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:8px; }
+  .btn { padding:9px 20px; border-radius:8px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; font-family:var(--font-sans); }
+  .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  .btn-ghost:hover { border-color:var(--border-hover); color:var(--text); }
+  .btn-primary { background:var(--emissao); color:#fff; }
+  .btn-primary:hover { filter:brightness(1.1); transform:translateY(-1px); }
+  .empty { display:none; text-align:center; padding:80px 20px; color:var(--muted); font-size:14px; }
+  .empty.show { display:block; }
+  .empty span { font-size:32px; display:block; margin-bottom:10px; }
+  .loading { text-align:center; padding:120px 20px; color:var(--muted); }
+  .spinner { width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--emissao);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px; }
+  .c-emissao .card-head::before{background:var(--emissao)}.c-emissao .dot{background:var(--emissao);box-shadow:0 0 8px var(--emissao)}.c-emissao h3{color:var(--emissao)}.c-emissao .tag{background:rgba(249,115,22,.1);color:var(--emissao)}
+  .c-utilizacao .card-head::before{background:var(--utilizacao)}.c-utilizacao .dot{background:var(--utilizacao);box-shadow:0 0 8px var(--utilizacao)}.c-utilizacao h3{color:var(--utilizacao)}.c-utilizacao .tag{background:rgba(34,197,94,.1);color:var(--utilizacao)}
+  .c-pendente .card-head::before{background:var(--pendente)}.c-pendente .dot{background:var(--pendente)}.c-pendente h3{color:var(--pendente)}.c-pendente .tag{background:rgba(107,114,128,.1);color:var(--pendente)}
+  .c-extranet .card-head::before{background:var(--extranet)}.c-extranet .dot{background:var(--extranet);box-shadow:0 0 8px var(--extranet)}.c-extranet h3{color:var(--extranet)}.c-extranet .tag{background:rgba(20,184,166,.1);color:var(--extranet)}
+  .c-reseller .card-head::before{background:var(--reseller)}.c-reseller .dot{background:var(--reseller);box-shadow:0 0 8px var(--reseller)}.c-reseller h3{color:var(--reseller)}.c-reseller .tag{background:rgba(236,72,153,.1);color:var(--reseller)}
+  .c-b2b .card-head::before{background:var(--b2b)}.c-b2b .dot{background:var(--b2b);box-shadow:0 0 8px var(--b2b)}.c-b2b h3{color:var(--b2b)}.c-b2b .tag{background:rgba(234,179,8,.1);color:var(--b2b)}
+  .c-restech .card-head::before{background:var(--restech)}.c-restech .dot{background:var(--restech);box-shadow:0 0 8px var(--restech)}.c-restech h3{color:var(--restech)}.c-restech .tag{background:rgba(59,130,246,.1);color:var(--restech)}
+  .c-channel_manager .card-head::before{background:var(--channel_manager)}.c-channel_manager .dot{background:var(--channel_manager);box-shadow:0 0 8px var(--channel_manager)}.c-channel_manager h3{color:var(--channel_manager)}.c-channel_manager .tag{background:rgba(168,85,247,.1);color:var(--channel_manager)}
+  .s-emissao{color:var(--emissao)}.s-utilizacao{color:var(--utilizacao)}.s-pendente{color:var(--pendente)}.s-extranet{color:var(--extranet)}.s-reseller{color:var(--reseller)}.s-b2b{color:var(--b2b)}.s-restech{color:var(--restech)}.s-channel_manager{color:var(--channel_manager)}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.8)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:640px){.hero,.toolbar,.chips,.main{padding-left:16px;padding-right:16px}.hero{padding-top:40px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="badge"><div class="pulse"></div>Ecossistema Ativo</div>
+  <h1>Fornecedores <span>Orange</span></h1>
+  <p class="subtitle">Mapa de fornecedores, plataformas e canais · Ingressos</p>
+</div>
+<div class="toolbar">
+  <div class="search-box">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" id="search" placeholder="Buscar fornecedor...">
+  </div>
+  <span class="result-count" id="resultCount"></span>
+  <div style="flex:1"></div>
+  <button class="btn btn-primary" id="addBtn" style="font-size:12px;padding:8px 16px;">+ Novo Fornecedor</button>
+</div>
+<div class="chips" id="chips"></div>
+<div class="main">
+  <div class="loading" id="loading"><div class="spinner"></div>Carregando fornecedores...</div>
+  <div class="empty" id="empty"><span>:/</span>Nenhum fornecedor encontrado.</div>
+  <div id="content"></div>
+</div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2 id="modalTitle">Novo Fornecedor</h2>
+    <label>Nome</label>
+    <input type="text" id="fName" placeholder="Nome do fornecedor">
+    <label>Camada</label>
+    <select id="fLayer">
+      <option value="emissao">Emissao</option>
+      <option value="utilizacao">Utilizacao</option>
+      <option value="pendente">Pendente</option>
+      <option value="extranet">Extranet</option>
+      <option value="reseller">Reseller</option>
+      <option value="b2b">B2B</option>
+      <option value="restech">ResTech</option>
+      <option value="channel_manager">Channel Manager</option>
+    </select>
+    <label>Regra de Faturamento</label>
+    <select id="fBilling">
+      <option value="">Nenhuma</option>
+      <option value="emissao">Emissao</option>
+      <option value="utilizacao">Utilizacao</option>
+    </select>
+    <label>Tags (separadas por virgula)</label>
+    <input type="text" id="fTags" placeholder="ex: emissao, pre-pago">
+    <label>Notas</label>
+    <textarea id="fNotes" placeholder="Observacoes..."></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelBtn">Cancelar</button>
+      <button class="btn btn-primary" id="saveBtn">Salvar</button>
+    </div>
+  </div>
+</div>
+<script>
+const SUPABASE_URL='https://zrzkyiecsrohsioebner.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpyemt5aWVjc3JvaHNpb2VibmVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzQ0NjgsImV4cCI6MjA4ODgxMDQ2OH0.mEzBxW8seWUz9t2VKQ2z5FxYKun9I0x8-s0W9VaUO9s';
+const LAYER_LABELS={emissao:'Base Data de Emissao',utilizacao:'Base Data de Utilizacao',pendente:'Sem Regra Definida',extranet:'Extranets / Plataformas',reseller:'Reseller / Distribution',b2b:'B2B Reseller Layer',restech:'Reservation Platforms (ResTechs)',channel_manager:'Channel Manager Layer'};
+const LAYER_ORDER=['emissao','utilizacao','pendente','extranet','reseller','b2b','restech','channel_manager'];
+let allData=[];let activeFilter='all';
+async function api(path,opts={}){const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':opts.prefer||'return=representation'},method:opts.method||'GET',body:opts.body?JSON.stringify(opts.body):undefined});return res.json();}
+async function loadSuppliers(){allData=await api('suppliers?select=*&order=name.asc');render();}
+function render(){const q=document.getElementById('search').value.toLowerCase().trim();const filtered=allData.filter(s=>{const matchSearch=!q||s.name.toLowerCase().includes(q);const matchFilter=activeFilter==='all'||s.layer===activeFilter;return matchSearch&&matchFilter;});const counts={};allData.forEach(s=>{counts[s.layer]=(counts[s.layer]||0)+1;});const chipsEl=document.getElementById('chips');chipsEl.innerHTML='<div class="chip '+(activeFilter==='all'?'active':'')+'" onclick="setFilter(\'all\')" style="color:var(--text)"><span class="cnum">'+allData.length+'</span><span class="clabel">Total</span></div>'+LAYER_ORDER.map(l=>{const c=counts[l]||0;if(!c)return'';return'<div class="chip '+(activeFilter===l?'active':'')+'" onclick="setFilter(\''+l+'\')" style="color:var(--'+l+')"><div class="cdot" style="background:var(--'+l+')"></div><span class="cnum">'+c+'</span><span class="clabel">'+l.replace('_',' ')+'</span></div>';}).join('');const groups={};filtered.forEach(s=>{if(!groups[s.layer])groups[s.layer]=[];groups[s.layer].push(s);});const contentEl=document.getElementById('content');document.getElementById('loading').style.display='none';if(filtered.length===0){contentEl.innerHTML='';document.getElementById('empty').classList.add('show');document.getElementById('resultCount').textContent='0 resultados';return;}document.getElementById('empty').classList.remove('show');document.getElementById('resultCount').textContent=q||activeFilter!=='all'?filtered.length+' resultado'+(filtered.length!==1?'s':''):'';let html='';LAYER_ORDER.forEach(layer=>{const items=groups[layer];if(!items||items.length===0)return;const cards=[];const chunkSize=layer==='reseller'?20:50;for(let i=0;i<items.length;i+=chunkSize){cards.push(items.slice(i,i+chunkSize));}html+='<div class="sec"><div class="sec-head"><h2 class="s-'+layer+'">'+LAYER_LABELS[layer]+'</h2><div class="cnt s-'+layer+'" style="border-color:var(--'+layer+')">'+items.length+'</div><div class="line"></div></div><div class="grid">';cards.forEach((chunk,ci)=>{const subtitle=cards.length>1?' · '+chunk[0].name.charAt(0)+'\u2013'+chunk[chunk.length-1].name.charAt(0):'';html+='<div class="card c-'+layer+'"><div class="card-head"><div class="dot"></div><h3>'+layer.replace('_',' ')+subtitle+'</h3><span class="cc">'+chunk.length+'</span></div><div class="items">';chunk.forEach(s=>{const tagText=s.tags&&s.tags.length?s.tags.join(' · '):layer.replace('_',' ');html+='<div class="item"><span class="item-name">'+s.name+'</span><span class="tag">'+tagText+'</span></div>';});html+='</div></div>';});html+='</div></div>';});contentEl.innerHTML=html;}
+function setFilter(f){activeFilter=f;render();}
+document.getElementById('search').addEventListener('input',render);
+const modalBg=document.getElementById('modalBg');document.getElementById('addBtn').addEventListener('click',()=>modalBg.classList.add('show'));document.getElementById('cancelBtn').addEventListener('click',()=>modalBg.classList.remove('show'));modalBg.addEventListener('click',e=>{if(e.target===modalBg)modalBg.classList.remove('show');});
+document.getElementById('saveBtn').addEventListener('click',async()=>{const name=document.getElementById('fName').value.trim();if(!name)return;const layer=document.getElementById('fLayer').value;const billing=document.getElementById('fBilling').value||null;const tags=document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);const notes=document.getElementById('fNotes').value.trim()||null;await api('suppliers',{method:'POST',body:{name,layer,billing_rule:billing,tags,notes}});document.getElementById('fName').value='';document.getElementById('fTags').value='';document.getElementById('fNotes').value='';modalBg.classList.remove('show');await loadSuppliers();});
+loadSuppliers();
+</script>
+</body>
+</html>
